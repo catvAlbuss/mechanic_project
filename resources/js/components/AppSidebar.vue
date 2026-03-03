@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-vue-next';
+import { BookOpen, FolderGit2, KeyRound, LayoutGrid, ShieldCheck, Users } from 'lucide-vue-next';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -14,8 +14,11 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { useAuthorization } from '@/composables/useAuthorization';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
+
+const { can } = useAuthorization();
 
 const mainNavItems: NavItem[] = [
     {
@@ -23,6 +26,34 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    // Educational note: each menu option is tied to a backend permission.
+    ...(can('users.manage')
+        ? [
+              {
+                  title: 'Usuarios',
+                  href: '/admin/users',
+                  icon: Users,
+              } satisfies NavItem,
+          ]
+        : []),
+    ...(can('roles.manage')
+        ? [
+              {
+                  title: 'Roles',
+                  href: '/admin/roles',
+                  icon: ShieldCheck,
+              } satisfies NavItem,
+          ]
+        : []),
+    ...(can('permissions.manage')
+        ? [
+              {
+                  title: 'Permisos',
+                  href: '/admin/permissions',
+                  icon: KeyRound,
+              } satisfies NavItem,
+          ]
+        : []),
 ];
 
 const footerNavItems: NavItem[] = [

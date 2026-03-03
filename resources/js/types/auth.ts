@@ -11,6 +11,8 @@ export type User = {
 
 export type Auth = {
     user: User;
+    permissions: string[];
+    roles: string[];
 };
 
 export type TwoFactorConfigContent = {

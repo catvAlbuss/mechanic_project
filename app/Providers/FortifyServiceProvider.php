@@ -6,10 +6,13 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
+use App\Models\User;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
 
@@ -29,8 +32,33 @@ class FortifyServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureActions();
+        $this->configureAuthentication();
         $this->configureViews();
         $this->configureRateLimiting();
+    }
+
+    /**
+     * Configure custom authentication rules.
+     *
+     * We add the "is_active" check to stop disabled users before session creation.
+     */
+    private function configureAuthentication(): void
+    {
+        Fortify::authenticateUsing(function (Request $request): ?User {
+            $user = User::query()->where('email', $request->string('email'))->first();
+
+            if (! $user || ! Hash::check($request->string('password')->toString(), $user->password)) {
+                return null;
+            }
+
+            if (! $user->is_active) {
+                throw ValidationException::withMessages([
+                    'email' => 'Tu cuenta está desactivada. Contacta a un administrador.',
+                ]);
+            }
+
+            return $user;
+        });
     }
 
     /**

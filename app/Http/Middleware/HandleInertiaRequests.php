@@ -35,11 +35,21 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
+                // Shared authorization map used by composables in Vue pages.
+                'permissions' => $user?->getAllPermissions()->pluck('name')->values() ?? [],
+                'roles' => $user?->getRoleNames()->values() ?? [],
+            ],
+            'flash' => [
+                // Keep flash naming explicit to make the feedback flow clear for juniors.
+                'success' => $request->session()->get('success'),
+                'error' => $request->session()->get('error'),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
