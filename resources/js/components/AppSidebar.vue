@@ -20,6 +20,7 @@ import type { NavItem } from '@/types';
 
 //AGREGAR RUTAS
 import companies from '@/routes/companies';
+import vehicles from '@/routes/vehicles';
 
 const { can } = useAuthorization();
 
@@ -33,6 +34,13 @@ const mainNavItems: NavItem[] = [
         title: 'Compañia',
         href: companies.index.url(),
         icon: LayoutGrid,
+    },
+
+    {
+        title: 'Vehiculo',
+        href: vehicles.index.url(),
+        icon: LayoutGrid,
+
     },
     // Educational note: each menu option is tied to a backend permission.
     ...(can('users.manage')
