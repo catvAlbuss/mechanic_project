@@ -61,17 +61,24 @@ class UserController extends Controller
      */
     public function store(UserStoreRequest $request): RedirectResponse
     {
-        $validated = $request->validated([
-            'id_company' =>['nullable','exists:companies,id'],
-            'lastname'=>['required', 'string', 'max:250'],
-            'dni' =>['required', 'integer', 'digits:8'],
-            'phone' =>['required', 'integer','digits:9'],
-            'address' => ['required', 'string', 'max:250'],
+        $validated = $request->validated();
+
+         $validate = $request->validate([
+            'id_company' => ['nullable','exists:companies,id'],
+            'lastname' => ['required', 'string', 'max:250'],
+            'dni' => ['required', 'integer', 'digits:8'],
+            'phone' => ['required', 'integer', 'digits:9'],
+            'address' => ['required', 'string'],
         ]);
 
 
         $user = User::query()->create([
+            'id_company' => $validate['id_company'],
             'name' => $validated['name'],
+            'lastname' => $validate['lastname'],
+            'dni' => $validate['dni'],
+            'phone' => $validate['phone'],
+            'address' => $validate['address'],
             'email' => $validated['email'],
             'password' => $validated['password'],
             'is_active' => $validated['is_active'],
@@ -99,9 +106,22 @@ class UserController extends Controller
         if (empty($validated['password'])) {
             unset($validated['password']);
         }
+        
+        $validate = $request->validate([
+            'id_company' => ['nullable','exists:companies,id'],
+            'lastname' => ['required', 'string', 'max:250'],
+            'dni' => ['required', 'integer', 'digits:8'],
+            'phone' => ['required', 'integer', 'digits:9'],
+            'address' => ['required', 'string'],
+        ]);
 
         $user->update([
+            'id_company' => $validate['id_company'],
             'name' => $validated['name'],
+            'lastname' => $validate['lastname'],
+            'dni' => $validate['dni'],
+            'phone' => $validate['phone'],
+            'address' => $validate['address'],
             'email' => $validated['email'],
             'is_active' => $validated['is_active'],
             ...(! empty($validated['password']) ? ['password' => $validated['password']] : []),
