@@ -62,13 +62,11 @@ class UserController extends Controller
     public function store(UserStoreRequest $request): RedirectResponse
     {
         $validated = $request->validated([
-            'id_company' =>['required','integer','nullable',''],
-            'name' => ['required', 'string','max:250'],
+            'id_company' =>['nullable','exists:companies,id'],
             'lastname'=>['required', 'string', 'max:250'],
             'dni' =>['required', 'integer', 'digits:8'],
             'phone' =>['required', 'integer','digits:9'],
             'address' => ['required', 'string', 'max:250'],
-
         ]);
 
 
