@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
-            $table->string('avatar');
-            $table->string('ruc');
-            $table->string('company_name');
-            $table->string('address');
-            $table->string('district');
-            $table->string('province');
-            $table->string('department');
+            $table->string('avatar')->nullable();
+            $table->string('ruc')->unique();
+            $table->string('company_name', 150);
+            $table->string('address', 255);
+            $table->string('district', 150);
+            $table->string('province', 150);
+            $table->string('department', 150);
             $table->enum('state',['active', 'inactive'])->default('active');
-            $table->timestamp('registration_date');
-            $table->json('config');
+            $table->date('registration_date')->nullable();
+            $table->json('config')->nullable();
             $table->timestamps();
         });
     }

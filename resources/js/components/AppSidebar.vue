@@ -18,6 +18,9 @@ import { useAuthorization } from '@/composables/useAuthorization';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
 
+//AGREGAR RUTAS
+import companies from '@/routes/companies';
+
 const { can } = useAuthorization();
 
 const mainNavItems: NavItem[] = [
@@ -25,34 +28,39 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+    }, 
+    {
+        title: 'Compañia',
+        href: companies.index.url(),
+        icon: LayoutGrid,
     },
     // Educational note: each menu option is tied to a backend permission.
     ...(can('users.manage')
         ? [
-              {
-                  title: 'Usuarios',
-                  href: '/admin/users',
-                  icon: Users,
-              } satisfies NavItem,
-          ]
+            {
+                title: 'Usuarios',
+                href: '/admin/users',
+                icon: Users,
+            } satisfies NavItem,
+        ]
         : []),
     ...(can('roles.manage')
         ? [
-              {
-                  title: 'Roles',
-                  href: '/admin/roles',
-                  icon: ShieldCheck,
-              } satisfies NavItem,
-          ]
+            {
+                title: 'Roles',
+                href: '/admin/roles',
+                icon: ShieldCheck,
+            } satisfies NavItem,
+        ]
         : []),
     ...(can('permissions.manage')
         ? [
-              {
-                  title: 'Permisos',
-                  href: '/admin/permissions',
-                  icon: KeyRound,
-              } satisfies NavItem,
-          ]
+            {
+                title: 'Permisos',
+                href: '/admin/permissions',
+                icon: KeyRound,
+            } satisfies NavItem,
+        ]
         : []),
 ];
 

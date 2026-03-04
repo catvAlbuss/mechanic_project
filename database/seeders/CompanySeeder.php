@@ -6,6 +6,8 @@ use App\Models\Company;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+use function Symfony\Component\Clock\now;
+
 class CompanySeeder extends Seeder
 {
     /**
