@@ -21,6 +21,7 @@ import type { NavItem } from '@/types';
 //AGREGAR RUTAS
 import companies from '@/routes/companies';
 import vehicles from '@/routes/vehicles';
+import services from '@/routes/services';
 
 const { can } = useAuthorization();
 
@@ -39,6 +40,12 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Vehiculo',
         href: vehicles.index.url(),
+        icon: LayoutGrid,
+
+    },
+    {
+        title: 'Servicio',
+        href: services.index.url(),
         icon: LayoutGrid,
 
     },

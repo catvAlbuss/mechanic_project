@@ -7,14 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { index as companiesIndex } from '@/routes/companies';
+import { index as vehiclesIndex } from '@/routes/vehicles';
 import { type BreadcrumbItem } from '@/types';
 import VehicleController from '@/actions/App/Http/Controllers/VehicleController';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Vehículo',
-        href: companiesIndex().url,
+        href: vehiclesIndex().url,
     },
 ];
 
@@ -30,7 +30,6 @@ type Vehicle = {
     year: string;
     model: string;
     mileage:number;
-    date: string;
     state: string;
     
 };
@@ -261,7 +260,6 @@ const remove = (vehicle: Vehicle): void => {
                                 <td class="px-2 py-2">{{ c.brand }}</td>
                                 <td class="px-2 py-2">{{ c.year }}</td>
                                 <td class="px-2 py-2">{{ c.mileage }}</td>
-                                <td class="px-2 py-2">{{ c.date }}</td>
                                 <td class="px-2 py-2">{{ c.state }}</td>
                                 <td class="px-2 py-2">
                                     <div class="flex gap-2">
