@@ -17,6 +17,11 @@ class Company extends Model
         'department',
         'state',
         'registration_date',
-        'config'
+        'config',
+    ];
+
+    protected $casts = [
+        // 'registration_date' => 'date',
+        'config' => 'array',
     ];
 }
