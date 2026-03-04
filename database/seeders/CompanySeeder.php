@@ -3,10 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Company;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-
-use function Symfony\Component\Clock\now;
 
 class CompanySeeder extends Seeder
 {
@@ -15,17 +12,46 @@ class CompanySeeder extends Seeder
      */
     public function run(): void
     {
-        Company::updateOrCreate([
-            'avatar'=>null,
-            'ruc'=>'20123456789',
-            'company_name'=>'Taller Mecánico Herrera S.A.C.',
-            'address'=>'Av. Los artesanos 123',
-            'district'=>'Huánuco',
-            'province'=>'Huánuco',
-            'department'=>'Huánuco',
-            'state'=>'active',
-            'registration_date'=>now(),
-            'config'=>[''],
-        ]);
+        $companies = [
+            [
+                'ruc' => '20123456789',
+                'avatar' => null,
+                'company_name' => 'Taller Mecanico Herrera S.A.C.',
+                'address' => 'Av. Los artesanos 123',
+                'district' => 'Huanuco',
+                'province' => 'Huanuco',
+                'department' => 'Huanuco',
+                'state' => 'active',
+                'registration_date' => now()->toDateString(),
+                'config' => [
+                    'theme' => 'light',
+                    'timezone' => 'America/Lima',
+                    'language' => 'es',
+                ],
+            ],
+            [
+                'ruc' => '20987654321',
+                'avatar' => null,
+                'company_name' => 'Servicios Automotrices Norte S.A.C.',
+                'address' => 'Jr. Progreso 456',
+                'district' => 'Huanuco',
+                'province' => 'Huanuco',
+                'department' => 'Huanuco',
+                'state' => 'active',
+                'registration_date' => now()->toDateString(),
+                'config' => [
+                    'theme' => 'dark',
+                    'timezone' => 'America/Lima',
+                    'language' => 'es',
+                ],
+            ],
+        ];
+
+        foreach ($companies as $company) {
+            Company::updateOrCreate(
+                ['ruc' => $company['ruc']],
+                $company
+            );
+        }
     }
 }

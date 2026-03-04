@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -20,6 +21,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'id_company',
         'dni',
         'name',
         'lastname',
@@ -27,10 +29,9 @@ class User extends Authenticatable
         'password',
         'phone',
         'address',
-        'state',
+        'is_active',
         'registration_date',
     ];
-
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -56,5 +57,9 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
             'is_active' => 'boolean',
         ];
+    }
+
+    public function company(): BelongsTo{
+        return $this->belongsTo(Company::class, 'id_company');
     }
 }

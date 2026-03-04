@@ -14,9 +14,20 @@ type CatalogItem = {
     name: string;
 };
 
+type Company ={
+    id:number;
+    company_name: string;
+}
+
 type UserRow = {
     id: number;
+    id_company: number;
+    company_name: string;
+    dni: number;
     name: string;
+    lastname: string;
+    phone: number;
+    address: string;
     email: string;
     is_active: boolean;
     roles: string[];
@@ -41,6 +52,7 @@ type Props = {
     users: Paginated<UserRow>;
     roles: CatalogItem[];
     permissions: CatalogItem[];
+    company: Company[];
 };
 
 const props = defineProps<Props>();
@@ -59,7 +71,12 @@ const breadcrumbs: BreadcrumbItem[] = [
  * - roles/permissions are optional arrays
  */
 const createForm = useForm({
+    id_company: 0,
+    dni: 0,
     name: '',
+    lastname: '',
+    phone: 0,
+    address: '',
     email: '',
     password: '',
     password_confirmation: '',
@@ -75,7 +92,12 @@ const createForm = useForm({
  */
 const editingUserId = ref<number | null>(null);
 const editForm = useForm({
+    id_company: 0,
+    dni: 0,
     name: '',
+    lastname: '',
+    phone: 0,
+    address: '',
     email: '',
     password: '',
     password_confirmation: '',
@@ -86,13 +108,20 @@ const editForm = useForm({
 
 const startEdit = (user: UserRow) => {
     editingUserId.value = user.id;
+    editForm.id_company = user.id_company;
+    editForm.dni = user.dni;
     editForm.name = user.name;
+    editForm.lastname = user.lastname;
+    editForm.phone = user.phone;
+    editForm.address = user.address;
     editForm.email = user.email;
     editForm.password = '';
     editForm.password_confirmation = '';
     editForm.is_active = user.is_active;
     editForm.roles = [...user.role_ids];
     editForm.permissions = [...user.permission_ids];
+
+    console.log(editForm);
 };
 
 const cancelEdit = () => {
@@ -142,17 +171,19 @@ const deleteUser = (user: UserRow) => {
         preserveScroll: true,
     });
 };
+
+const selectClass =
+    'w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2b4485] focus:border-[#2b4485] transition-colors';
 </script>
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbs">
+
         <Head title="Administrar usuarios" />
 
         <div class="space-y-8 p-4 md:p-6">
-            <Heading
-                title="CRUD de Usuarios"
-                description="Crear, editar, activar o desactivar usuarios, con asignación de roles y permisos."
-            />
+            <Heading title="CRUD de Usuarios"
+                description="Crear, editar, activar o desactivar usuarios, con asignación de roles y permisos." />
 
             <div v-if="flash.success" class="rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-700">
                 {{ flash.success }}
@@ -165,8 +196,32 @@ const deleteUser = (user: UserRow) => {
                 <h3 class="mb-4 text-sm font-semibold">Crear usuario</h3>
                 <form class="grid gap-4 md:grid-cols-2" @submit.prevent="submitCreate">
                     <div class="space-y-1">
+                        <Label for="create-dni">Dni</Label>
+                        <Input id="create-dni" v-model="createForm.dni" />
+                        <InputError :message="createForm.errors.name" />
+                    </div>
+
+                    <div class="space-y-1">
                         <Label for="create-name">Nombre</Label>
                         <Input id="create-name" v-model="createForm.name" />
+                        <InputError :message="createForm.errors.name" />
+                    </div>
+
+                    <div class="space-y-1">
+                        <Label for="create-lastname">Apellido</Label>
+                        <Input id="create-lastname" v-model="createForm.lastname" />
+                        <InputError :message="createForm.errors.name" />
+                    </div>
+
+                    <div class="space-y-1">
+                        <Label for="create-phone">Celular</Label>
+                        <Input id="create-phone" v-model="createForm.phone" />
+                        <InputError :message="createForm.errors.name" />
+                    </div>
+
+                    <div class="space-y-1">
+                        <Label for="create-address">Direccion</Label>
+                        <Input id="create-address" v-model="createForm.address" />
                         <InputError :message="createForm.errors.name" />
                     </div>
 
@@ -184,11 +239,19 @@ const deleteUser = (user: UserRow) => {
 
                     <div class="space-y-1">
                         <Label for="create-password-confirmation">Confirmar password</Label>
-                        <Input
-                            id="create-password-confirmation"
-                            type="password"
-                            v-model="createForm.password_confirmation"
-                        />
+                        <Input id="create-password-confirmation" type="password"
+                            v-model="createForm.password_confirmation" />
+                    </div>
+
+                    <div>
+                        <Label for="create-company">Compañia</Label>
+                        <select v-model="createForm.id_company" :class="selectClass" required>
+                            <option value="0" disabled>
+                                Seleccionar...
+                            </option>
+                            <option v-for="comp in props.company" :key="comp.id" :value="comp.id">{{ comp.company_name }}</option>
+                        </select>
+                        <InputError :message="createForm.errors.id_company" />
                     </div>
 
                     <div class="md:col-span-2">
@@ -202,16 +265,10 @@ const deleteUser = (user: UserRow) => {
                     <div>
                         <p class="mb-2 text-sm font-medium">Roles</p>
                         <div class="grid gap-1">
-                            <label
-                                v-for="role in props.roles"
-                                :key="`create-role-${role.id}`"
-                                class="inline-flex items-center gap-2 text-sm"
-                            >
-                                <input
-                                    type="checkbox"
-                                    :checked="createForm.roles.includes(role.id)"
-                                    @change="toggleRole(createForm, role.id)"
-                                />
+                            <label v-for="role in props.roles" :key="`create-role-${role.id}`"
+                                class="inline-flex items-center gap-2 text-sm">
+                                <input type="checkbox" :checked="createForm.roles.includes(role.id)"
+                                    @change="toggleRole(createForm, role.id)" />
                                 {{ role.name }}
                             </label>
                         </div>
@@ -220,16 +277,10 @@ const deleteUser = (user: UserRow) => {
                     <div>
                         <p class="mb-2 text-sm font-medium">Permisos directos</p>
                         <div class="grid gap-1">
-                            <label
-                                v-for="permission in props.permissions"
-                                :key="`create-permission-${permission.id}`"
-                                class="inline-flex items-center gap-2 text-sm"
-                            >
-                                <input
-                                    type="checkbox"
-                                    :checked="createForm.permissions.includes(permission.id)"
-                                    @change="togglePermission(createForm, permission.id)"
-                                />
+                            <label v-for="permission in props.permissions" :key="`create-permission-${permission.id}`"
+                                class="inline-flex items-center gap-2 text-sm">
+                                <input type="checkbox" :checked="createForm.permissions.includes(permission.id)"
+                                    @change="togglePermission(createForm, permission.id)" />
                                 {{ permission.name }}
                             </label>
                         </div>
@@ -247,7 +298,11 @@ const deleteUser = (user: UserRow) => {
                     <table class="min-w-full text-left text-sm">
                         <thead class="border-b">
                             <tr>
-                                <th class="px-2 py-2">Usuario</th>
+                                <th class="px-2 py-2">Nombre</th>
+                                <th class="px-2 py-2">email</th>
+                                <th class="px-2 py-2">Dni</th>
+                                <th class="px-2 py-2">Direccion</th>
+                                <th class="px-2 py-2">Compañia</th>
                                 <th class="px-2 py-2">Roles</th>
                                 <th class="px-2 py-2">Estado</th>
                                 <th class="px-2 py-2">Acciones</th>
@@ -257,7 +312,20 @@ const deleteUser = (user: UserRow) => {
                             <tr v-for="user in props.users.data" :key="user.id" class="border-b align-top">
                                 <td class="px-2 py-2">
                                     <p class="font-medium">{{ user.name }}</p>
-                                    <p class="text-xs text-muted-foreground">{{ user.email }}</p>
+                                    <p class="text-xs text-muted-foreground">{{ user.lastname }}</p>
+                                </td>
+                                <td class="px-2 py-2">
+                                    <p class="font-medium">{{ user.email }}</p>
+                                </td>
+                                <td class="px-2 py-2">
+                                    <p class="font-medium">{{ user.dni }}</p>
+                                </td>
+                                <td class="px-2 py-2">
+                                    <p class="font-medium">{{ user.address }}</p>
+                                    <p class="text-xs text-muted-foreground">Celular: {{ user.phone }}</p>
+                                </td>
+                                <td class="px-2 py-2">
+                                    {{ user.company_name || 'No asignado' }}
                                 </td>
                                 <td class="px-2 py-2">
                                     {{ user.roles.join(', ') || 'Sin roles' }}
@@ -280,17 +348,11 @@ const deleteUser = (user: UserRow) => {
                 </div>
 
                 <div class="mt-4 flex flex-wrap gap-2">
-                    <Link
-                        v-for="link in props.users.links"
-                        :key="link.label"
-                        :href="link.url || '#'"
-                        :class="[
-                            'rounded border px-2 py-1 text-xs',
-                            link.active ? 'bg-primary text-primary-foreground' : '',
-                            !link.url ? 'pointer-events-none opacity-40' : '',
-                        ]"
-                        v-html="link.label"
-                    />
+                    <Link v-for="link in props.users.links" :key="link.label" :href="link.url || '#'" :class="[
+                        'rounded border px-2 py-1 text-xs',
+                        link.active ? 'bg-primary text-primary-foreground' : '',
+                        !link.url ? 'pointer-events-none opacity-40' : '',
+                    ]" v-html="link.label" />
                 </div>
             </section>
 
@@ -298,8 +360,32 @@ const deleteUser = (user: UserRow) => {
                 <h3 class="mb-4 text-sm font-semibold">Editar usuario #{{ editingUserId }}</h3>
                 <form class="grid gap-4 md:grid-cols-2" @submit.prevent="submitEdit">
                     <div class="space-y-1">
+                        <Label for="edit-dni">Dni</Label>
+                        <Input id="edit-dni" v-model="editForm.dni" />
+                        <InputError :message="editForm.errors.name" />
+                    </div>
+
+                    <div class="space-y-1">
                         <Label for="edit-name">Nombre</Label>
                         <Input id="edit-name" v-model="editForm.name" />
+                        <InputError :message="editForm.errors.name" />
+                    </div>
+
+                    <div class="space-y-1">
+                        <Label for="edit-lastname">Apellido</Label>
+                        <Input id="edit-lastname" v-model="editForm.lastname" />
+                        <InputError :message="editForm.errors.name" />
+                    </div>
+
+                    <div class="space-y-1">
+                        <Label for="edit-phone">Celular</Label>
+                        <Input id="edit-phone" v-model="editForm.phone" />
+                        <InputError :message="editForm.errors.name" />
+                    </div>
+
+                    <div class="space-y-1">
+                        <Label for="edit-address">Direccion</Label>
+                        <Input id="edit-address" v-model="editForm.address" />
                         <InputError :message="editForm.errors.name" />
                     </div>
 
@@ -317,7 +403,19 @@ const deleteUser = (user: UserRow) => {
 
                     <div class="space-y-1">
                         <Label for="edit-password-confirmation">Confirmar nuevo password</Label>
-                        <Input id="edit-password-confirmation" type="password" v-model="editForm.password_confirmation" />
+                        <Input id="edit-password-confirmation" type="password"
+                            v-model="editForm.password_confirmation" />
+                    </div>
+
+                    <div>
+                        <Label for="create-company">Compañia</Label>
+                        <select v-model="editForm.id_company" :class="selectClass" required>
+                            <option value="0" disabled>
+                                Seleccionar...
+                            </option>
+                            <option v-for="comp in props.company" :key="comp.id" :value="comp.id">{{ comp.company_name }}</option>
+                        </select>
+                        <InputError :message="editForm.errors.id_company" />
                     </div>
 
                     <div class="md:col-span-2">
@@ -331,16 +429,10 @@ const deleteUser = (user: UserRow) => {
                     <div>
                         <p class="mb-2 text-sm font-medium">Roles</p>
                         <div class="grid gap-1">
-                            <label
-                                v-for="role in props.roles"
-                                :key="`edit-role-${role.id}`"
-                                class="inline-flex items-center gap-2 text-sm"
-                            >
-                                <input
-                                    type="checkbox"
-                                    :checked="editForm.roles.includes(role.id)"
-                                    @change="toggleRole(editForm, role.id)"
-                                />
+                            <label v-for="role in props.roles" :key="`edit-role-${role.id}`"
+                                class="inline-flex items-center gap-2 text-sm">
+                                <input type="checkbox" :checked="editForm.roles.includes(role.id)"
+                                    @change="toggleRole(editForm, role.id)" />
                                 {{ role.name }}
                             </label>
                         </div>
@@ -349,16 +441,10 @@ const deleteUser = (user: UserRow) => {
                     <div>
                         <p class="mb-2 text-sm font-medium">Permisos directos</p>
                         <div class="grid gap-1">
-                            <label
-                                v-for="permission in props.permissions"
-                                :key="`edit-permission-${permission.id}`"
-                                class="inline-flex items-center gap-2 text-sm"
-                            >
-                                <input
-                                    type="checkbox"
-                                    :checked="editForm.permissions.includes(permission.id)"
-                                    @change="togglePermission(editForm, permission.id)"
-                                />
+                            <label v-for="permission in props.permissions" :key="`edit-permission-${permission.id}`"
+                                class="inline-flex items-center gap-2 text-sm">
+                                <input type="checkbox" :checked="editForm.permissions.includes(permission.id)"
+                                    @change="togglePermission(editForm, permission.id)" />
                                 {{ permission.name }}
                             </label>
                         </div>

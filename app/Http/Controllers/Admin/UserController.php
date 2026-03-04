@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserStoreRequest;
 use App\Http\Requests\Admin\UserUpdateRequest;
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,12 +27,18 @@ class UserController extends Controller
     public function index(): Response
     {
         $users = User::query()
-            ->with(['roles:id,name', 'permissions:id,name'])
+            ->with(['roles:id,name', 'permissions:id,name','company:id,company_name'])
             ->latest()
             ->paginate(10)
             ->through(fn (User $user): array => [
                 'id' => $user->id,
+                'id_company'=>$user->id_company,
+                'company_name' => $user->company?->company_name,
+                'dni' => $user->dni,
+                'phone' =>$user->phone,
                 'name' => $user->name,
+                'lastname'=>$user->lastname,
+                'address' =>$user->address,
                 'email' => $user->email,
                 'is_active' => $user->is_active,
                 'roles' => $user->roles->pluck('name')->values(),
@@ -45,6 +52,7 @@ class UserController extends Controller
             'users' => $users,
             'roles' => Role::query()->orderBy('name')->get(['id', 'name']),
             'permissions' => Permission::query()->orderBy('name')->get(['id', 'name']),
+            'company' => Company::query()->orderBy('company_name')->get (['id','company_name']),
         ]);
     }
 
@@ -53,7 +61,14 @@ class UserController extends Controller
      */
     public function store(UserStoreRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
+        $validated = $request->validated([
+            'id_company' =>['nullable','exists:companies,id'],
+            'lastname'=>['required', 'string', 'max:250'],
+            'dni' =>['required', 'integer', 'digits:8'],
+            'phone' =>['required', 'integer','digits:9'],
+            'address' => ['required', 'string', 'max:250'],
+        ]);
+
 
         $user = User::query()->create([
             'name' => $validated['name'],
