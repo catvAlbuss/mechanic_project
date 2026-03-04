@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Company;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class CompanySeeder extends Seeder
@@ -15,41 +14,41 @@ class CompanySeeder extends Seeder
     {
         $companies = [
             [
-                'avatar' => 'companies/default1.png',
-                'ruc' => '12345678901',
-                'company_name' => 'Empresa Demo 1',
-                'address' => 'Av. Principal 123',
-                'district' => 'Miraflores',
-                'province' => 'Lima',
-                'department' => 'Lima',
+                'ruc' => '20123456789',
+                'avatar' => null,
+                'company_name' => 'Taller Mecanico Herrera S.A.C.',
+                'address' => 'Av. Los artesanos 123',
+                'district' => 'Huanuco',
+                'province' => 'Huanuco',
+                'department' => 'Huanuco',
                 'state' => 'active',
-                'registration_date' => now(),
-                'config' => json_encode([
+                'registration_date' => now()->toDateString(),
+                'config' => [
                     'theme' => 'light',
                     'timezone' => 'America/Lima',
-                    'language' => 'es'
-                ]),
+                    'language' => 'es',
+                ],
             ],
             [
-                'avatar' => 'companies/default2.png',
-                'ruc' => '10987654321',
-                'company_name' => 'Empresa Demo 2',
-                'address' => 'Jr. Secundario 456',
-                'district' => 'San Isidro',
-                'province' => 'Lima',
-                'department' => 'Lima',
+                'ruc' => '20987654321',
+                'avatar' => null,
+                'company_name' => 'Servicios Automotrices Norte S.A.C.',
+                'address' => 'Jr. Progreso 456',
+                'district' => 'Huanuco',
+                'province' => 'Huanuco',
+                'department' => 'Huanuco',
                 'state' => 'active',
-                'registration_date' => now(),
-                'config' => json_encode([
+                'registration_date' => now()->toDateString(),
+                'config' => [
                     'theme' => 'dark',
                     'timezone' => 'America/Lima',
-                    'language' => 'en'
-                ]),
-            ]
+                    'language' => 'es',
+                ],
+            ],
         ];
 
-        foreach($companies as $company){
-            Company::firstOrCreate(
+        foreach ($companies as $company) {
+            Company::updateOrCreate(
                 ['ruc' => $company['ruc']],
                 $company
             );
