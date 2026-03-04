@@ -48,7 +48,12 @@ class AccessControlSeeder extends Seeder
         $superAdmin = User::query()->firstOrCreate(
             ['email' => 'admin@example.com'],
             [
+                'id_company' => 1,
                 'name' => 'Super Admin',
+                'dni' => 12345678,
+                'lastname' =>'Admin',
+                'phone' =>987654321,
+                'address' =>'Jr Bolivar',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'email_verified_at' => now(),
@@ -59,7 +64,12 @@ class AccessControlSeeder extends Seeder
         $inactiveUser = User::query()->firstOrCreate(
             ['email' => 'inactive@example.com'],
             [
+                'id_company' => 2,
                 'name' => 'Usuario Desactivado',
+                'dni' => 87654321,
+                'lastname' =>'Desactivado',
+                'phone' =>123456789,
+                'address' =>'Jr Crespo Castillo',
                 'password' => Hash::make('password'),
                 'is_active' => false,
                 'email_verified_at' => now(),

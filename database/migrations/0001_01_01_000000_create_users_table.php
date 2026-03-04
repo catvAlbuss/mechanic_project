@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_company')->references('id')->on('companies')->onDelete('cascade');
             $table->string('dni')->unique();
             $table->string('name');
             $table->string('lastname');
@@ -20,8 +21,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->integer('phone');
-            $table->string('address');
-            $table->enum('state', ['active', 'inactive'])->default('active');
+            $table->string('address')->nullable();
             $table->timestamp('registration_date')->useCurrent();
             $table->rememberToken();
             $table->timestamps();
