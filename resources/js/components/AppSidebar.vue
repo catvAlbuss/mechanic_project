@@ -20,6 +20,9 @@ import type { NavItem } from '@/types';
 
 //AGREGAR RUTAS
 import companies from '@/routes/companies';
+import providers from '@/routes/providers';
+import diagnostics from '@/routes/diagnostics';
+
 
 const { can } = useAuthorization();
 
@@ -32,6 +35,16 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Compañia',
         href: companies.index.url(),
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Proveedor',
+        href: providers.index.url(),
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Diagnóstico',
+        href: diagnostics.index.url(),
         icon: LayoutGrid,
     },
     // Educational note: each menu option is tied to a backend permission.

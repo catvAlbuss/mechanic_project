@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('id_user')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('id_reservation')->references('id')->on('reservations')->onDelete('cascade');
-            $table->string('description');
-            $table->date('registration_date');
-            $table->decimal('cost_aprox');
+            $table->text('description');
+            $table->date('registration_date')->useCurrent();
+            $table->decimal('cost_aprox', 10,2);
             $table->timestamps();
         });
     }

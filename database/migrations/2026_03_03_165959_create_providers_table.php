@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('providers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_company')->references('id')->on('companies')->onDelete('cascade');
-            $table->string('ruc');
+            $table->string('ruc', 11);
             $table->string('company_name');
             $table->string('address');
             $table->string('email');
-            $table->integer('contact');
+            $table->string('contact', 20);
             $table->enum('state',['active', 'inactive'])->default('active');
-            $table->timestamp('registration_date');
+            $table->timestamp('registration_date')->useCurrent();
             $table->timestamps();
         });
     }

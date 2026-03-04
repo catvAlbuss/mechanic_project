@@ -17,7 +17,7 @@ class Provider extends Model
         'state',
         'registration_date',
     ];
-
+    
     public function company(){
         return $this->belongsTo(Company::class,'id_company');
     }
