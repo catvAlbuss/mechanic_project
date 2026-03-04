@@ -4,12 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Company;
 use Illuminate\Database\Seeder;
-
-<<<<<<<<< Temporary merge branch 1
-use function Symfony\Component\Clock\now;
-
-=========
->>>>>>>>> Temporary merge branch 2
 class CompanySeeder extends Seeder
 {
     /**
