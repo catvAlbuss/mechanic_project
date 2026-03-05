@@ -7,20 +7,21 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { index as companiesIndex } from '@/routes/companies';
+import { index as vehiclesIndex } from '@/routes/vehicles';
 import { type BreadcrumbItem } from '@/types';
 import VehicleController from '@/actions/App/Http/Controllers/VehicleController';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Vehículo',
-        href: companiesIndex().url,
+        href: vehiclesIndex().url,
     },
 ];
 
 type Vehicle = {
     id: number;
     id_user: string;
+    name: string;
     plate: string;
     tipe: string;
     vin: string;
@@ -29,24 +30,28 @@ type Vehicle = {
     brand: string;
     year: string;
     model: string;
-    mileage:number;
-    date: string;
+    mileage: number;
     state: string;
-    
 };
+
+type User = {
+    id: number;
+    name: string;
+}
 
 type Props = {
     vehicles: Vehicle[];
+    users: User[];
 };
 
 const props = defineProps<Props>();
 const vehicles = computed(() => props.vehicles);
+const users = computed(() => props.users);
 // const roles = computed(() => props.roles);
 
 const editingId = ref<number | null>(null);
 
 const form = useForm({
-    
     id_user: '',
     plate: '',
     tipe: '',
@@ -58,7 +63,7 @@ const form = useForm({
     state: 'active',
     mileage: 0,
     model: ''
-   
+
 });
 
 const deleteForm = useForm({});
@@ -84,9 +89,9 @@ const startEdit = (vehicle: Vehicle): void => {
     form.brand = vehicle.brand;
     form.year = vehicle.year;
     form.mileage = vehicle.mileage;
- 
+
     form.model = vehicle.model;
-    form.state=vehicle.state;
+    form.state = vehicle.state;
 };
 
 const submit = (): void => {
@@ -133,8 +138,11 @@ const remove = (vehicle: Vehicle): void => {
                 <form class="mt-4 grid gap-4 md:grid-cols-2" @submit.prevent="submit">
 
                     <div class="grid gap-2">
-                        <Label for="id_user">ID Usuario</Label>
-                        <Input id="id_user" v-model="form.id_user" type="text" required />
+                        <Label for="state">Usuario</Label>
+                        <select id="state" v-model="form.id_user" required
+                            class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50">
+                            <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
+                        </select>
                         <InputError :message="form.errors.id_user" />
                     </div>
 
@@ -146,9 +154,9 @@ const remove = (vehicle: Vehicle): void => {
 
                     <div class="grid gap-2">
                         <Label for="tipe">Tipo</Label>
-                       
+
                         <select id="tipe" v-model="form.tipe" required
-                         class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50">
+                            class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50">
                             <option value="motorcycle">motocicleta</option>
                             <option value="car">carro</option>
                             <option value="truck">camion</option>
@@ -246,13 +254,13 @@ const remove = (vehicle: Vehicle): void => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-if="vehicles.length === 0">
+                            <tr v-if="!vehicles || vehicles.length === 0">
                                 <td colspan="12" class="px-2 py-4 text-center text-muted-foreground">
                                     No hay vehículos registrados.
                                 </td>
                             </tr>
                             <tr v-for="c in vehicles" :key="c.id" class="border-b">
-                                <td class="px-2 py-2">{{ c.id_user }}</td>
+                                <td class="px-2 py-2">{{ c.id_user}}</td>
                                 <td class="px-2 py-2">{{ c.plate }}</td>
                                 <td class="px-2 py-2">{{ c.tipe }}</td>
                                 <td class="px-2 py-2">{{ c.vin }}</td>
@@ -261,7 +269,7 @@ const remove = (vehicle: Vehicle): void => {
                                 <td class="px-2 py-2">{{ c.brand }}</td>
                                 <td class="px-2 py-2">{{ c.year }}</td>
                                 <td class="px-2 py-2">{{ c.mileage }}</td>
-                                <td class="px-2 py-2">{{ c.date }}</td>
+                                <td class="px-2 py-2">{{ c.model }}</td>
                                 <td class="px-2 py-2">{{ c.state }}</td>
                                 <td class="px-2 py-2">
                                     <div class="flex gap-2">

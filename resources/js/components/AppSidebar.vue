@@ -21,6 +21,7 @@ import type { NavItem } from '@/types';
 //AGREGAR RUTAS
 import companies from '@/routes/companies';
 import vehicles from '@/routes/vehicles';
+import reservations from '@/routes/reservations';
 
 const { can } = useAuthorization();
 
@@ -30,6 +31,11 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     }, 
+    {
+        title: 'Reservacion',
+        href: reservations.index.url(),
+        icon: LayoutGrid,
+    },
     {
         title: 'Compañia',
         href: companies.index.url(),
