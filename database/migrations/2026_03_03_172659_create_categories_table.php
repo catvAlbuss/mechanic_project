@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('brand');
             $table->string('description');
-            $table->enum('state', ['active','inactive']);
+            $table->enum('state', ['active','inactive'])->default('active');
             $table->timestamps();
         });
     }
